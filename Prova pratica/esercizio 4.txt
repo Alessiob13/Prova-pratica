@@ -1,0 +1,100 @@
+Per automatizzare la creazione dell'infrastruttura e la configurazione dell'applicazione WordPress,
+è possibile utilizzare una combinazione di strumenti come Terraform o AWS CloudFormation per la creazione
+dell'infrastruttura per la configurazione dell'applicazione.
+
+AWS CloudFormation è uno strumento di provisioning di infrastrutture che permette di definire l'infrastruttura
+come codice, eliminando così la necessità di creare manualmente risorse come istanze EC2, gruppi di sicurezza,
+bilanciatori di carico e così via.
+
+Per quanto riguarda l'installazione di WordPress, possiamo utilizzare il servizio di lancio di istanze
+di Amazon EC2, insieme alla configurazione dei server web (Apache o Nginx) e al database MySQL.
+
+Ecco un'architettura di riferimento per una soluzione:
+
+Creare una nuova istanza EC2 di tipo t2.micro ad esempio, utilizzando Amazon Linux 2, scegliamo  che tipo di pricelist vogliamo
+avere, definendo una certa quantità di memoria e di spazio che vogliamo affittare.
+Nota: quando crei un istanza, il servizio ti rilascerà una key prima di occupare lo spazio richiesto.
+Questa key sarà la chiave univoca dello spazio affittato, dovrà essere conservata in un luogo protetto e non dovrà essere
+condivisa con nessuno, ne varrà la sicurezza del servizio.
+Installare Apache, PHP e MySQL e aprire la porta 80 per consentire l'accesso HTTP, creare inoltre un gruppo di
+sicurezza per consentire l'accesso alla porta 80.
+Creare il file di template nell'interfaccia di AWS e avviare la creazione dello stack. Dopo che lo stack
+è stato creato, verificare, accedendo all'url di pubblico dominio dell'istanza EC2 per verificare che Apache sia
+in esecuzione e funzionante.
+Dopodichè configurare il servere Apache per ospitare il sito Wordpress
+
+Configurare le regole del firewall sulla macchina virtuale per consentire solo il traffico HTTP e HTTPS in ingresso.
+
+Installazione di WordPress
+
+Installare le dipendenze necessarie, come PHP, MySQL e le librerie necessarie. (LAMP)
+
+Configura il database MySQL per WordPress e crea un utente con le autorizzazioni appropriate, ad esempio:
+CREATE DATABASE mywordpressdb;
+CREATE USER wordpressuser@localhost IDENTIFIED BY "user";
+GRANT ALL PRIVILEGES ON mywordpressdb.* to wordpressuser@localhost;
+FLUSH PRIVILEGES;
+EXIT;
+
+Configura il file wp-config.php con le informazioni del database.
+un modo per configurare il file wp-config.php può essere il seguente.
+Da client ssh come putty entrare all'interno del Cloud Server ed accedere alla cartella dove risiede il file
+
+cd var/www/html/wordpress
+
+con il comando "ls" vediamo la lista dei file presenti all'interno della cartella e selezioniamo il file wp-config.php
+dopodichè modifichiamo il file, tramite il comando "nano" che è un text editor di Linux:
+
+sudo nano wp-config.php
+
+modifichiamo il file con le nostre credenziali e le reference di Wordpress che possiamo trovare all'url:
+https://api.wordpress.org/secret-key/1.1/salt
+
+define('AUTH_KEY',         '%:VH+Ay[}YY^&#{-+!Rbw]/><{~fZA~sD$ClbOU/(OpiY;V+O}fl|#vHtSO<Omz,');
+define('SECURE_AUTH_KEY',  '43,>[iDJW:+].n;)R)9S-w]#9yFHDTxHrw2bq/A9|&B dk(#BL_VD<B3RXTQj?uG');
+define('LOGGED_IN_KEY',    '{x?|e+V7+@T4r61:8,U5)u6_B#e|Js.<[luuckNC]|F+PHw-QP2xv<Nu@bE1Sh5C');
+define('NONCE_KEY',        '%}3/4!D+:NR]F5`<aL*75(e:0q(z#j(-iq.Tyfvy+|Y>B^zndiaj!8%8lpR9]c/W');
+define('AUTH_SALT',        '9/e[t)rbns7!=*~#uAj45^n%Q_~f.W-T ebILo+t08kc/*a_5~#Xy5ZnG>GT|3:^');
+define('SECURE_AUTH_SALT', 'Q&Bu6ceA+2&S%0_8KlQ4#Ume_7L5y5kS[U@$GQ:aEE[!nw!*fH+Mt? kB$L4=d~`');
+define('LOGGED_IN_SALT',   'd+n9@fzVoYJ8 lrny>S*(E#tf8^k3H?jluGp]A~_J3w.X%^-HiB=+By%npl]~9|h');
+define('NONCE_SALT',       'bOkl-FjKz0c?cR/8IFhv}Uc:u|Q[N3sq)8#.j^|A?JI*zvNA/5Cacm7s#/XI38BX');
+
+
+Sicurezza
+Configurare il web server per utilizzare HTTPS e installa un certificato SSL valido.
+Configura le regole del firewall sulla macchina virtuale per limitare l'accesso solo ai servizi necessari.
+Configura WordPress per utilizzare password complesse per gli utenti e attivare l'autenticazione a due fattori, 
+se disponibile.
+
+Velocità e tolleranza agli errori
+Utilizza un sistema di caching come Memcached per aumentare la velocità di WordPress.
+Memcached è un datastore in-memory, di facile utilizzo e ad alte prestazioni. Offre una soluzione matura, scalabile e open-source
+ per ottenere tempi di risposta inferiori a un millisecondo, una funzionalità utile come cache o store delle sessioni.
+ Memcached è una scelta popolare per le applicazioni in tempo reale su Web, app mobile, videogiochi, tecnologia pubblicitaria
+ ed e-commerce.
+Tra i principali vantaggi di Memcahced abbiamo: 
+	- Tempi di risposta inferiori al millisecondo
+	- Semplicità e intuitività
+	- Scalabilità
+	
+Configura il server web e PHP per gestire la memorizzazione nella cache e il buffering.
+Configura il server per gestire gli errori e visualizzare messaggi di errore adeguati.
+
+Adattivo al carico medio
+Utilizza un bilanciatore di carico come AWS Elastic Load Balancer o NGINX Plus per bilanciare il carico tra 
+più istanze di WordPress.
+Configura il bilanciatore di carico per aumentare o ridurre dinamicamente il numero di istanze di WordPress 
+in base alla domanda.
+
+CI/CD
+Utilizza uno strumento di integrazione continua come Jenkins per automatizzare il processo di distribuzione di 
+WordPress.
+Nota: Jenkins potrebbe non essere necessario nel caso in cui si usa AWS, in quanto AWS può gestire il sistema CI/CD attraverso la sua
+piattaforma, da linea di comando.
+Configura il processo di CI/CD per effettuare il testing automatico, il rilascio automatico e il rollback automatico 
+in caso di problemi.
+
+Per quanto riguarda le istruzioni per l'installazione, è possibile creare un file README con tutte le informazioni
+ necessarie per l'installazione e l'utilizzo dell'applicazione WordPress. Questo file dovrebbe includere un diagramma 
+ dell'architettura, le istruzioni per l'installazione e la configurazione, le credenziali di accesso, le informazioni 
+ di contatto per il supporto e altro ancora.

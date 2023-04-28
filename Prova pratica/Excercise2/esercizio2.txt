@@ -1,0 +1,60 @@
+Questo script conta il numero di file all'interno della directory che hanno l'interprete shebang.
+
+Lo shebang interpreter è una convenzione utilizzata nei sistemi operativi Unix e Unix-like (come Linux e macOS) per indicare all'interprete di 
+comandi quale programma usare per eseguire uno script.
+
+Nella prima riga di un file di script, il simbolo hash (#) seguito dal carattere esclamativo (!) rappresenta lo shebang (o hashbang).
+ Quindi, l'interprete di comandi legge la prima riga del file, controlla se contiene uno shebang e interpreta il resto del file di conseguenza.
+
+Ad esempio, se lo shebang interpreter nel primo rigo di uno script è #!/bin/bash, questo indica che lo script deve essere eseguito usando l'interprete 
+di comandi bash. In questo modo, il sistema operativo sa quale programma utilizzare per eseguire lo script in modo corretto.
+
+Lo shebang interpreter è particolarmente utile quando si scrivono script complessi o quando si utilizzano linguaggi di scripting diversi da quello predefinito
+ dal sistema operativo.
+
+Per poter scrivere questo modulo ci serviamo del modulo Python os che ci permette di interfacciarci con il sistema operativo
+e richiamare determinate funzioni.
+
+All'interno del codice creiamo un'array vuoto filterFiles. Dopo di chè con un ciclo for controlliamo in maniera ordinata 
+i file che stanno all'interno della directory selezionata. All'interno del ciclo for facciamo un controllo e prendiamo tutti
+i file che hanno come estensione ".sh" e li inseriamo nell'array filterFiles
+
+	if file.endswith(".sh"):
+        	filterFiles.append(file) #aggiunge i file all'array filterFiles
+
+
+Il secondo ciclo for itera l'array filterFiles.
+
+con un if controlliamo le il file iterato fa parte del percorso, in seguito viene aperto in lettura e con il metodo .read() letto
+In una nuova variabile inseriamo il file letto e splittato, tramite il metodo splitlines()
+
+Il metodo splitlines() divide una stringa in un elenco. La divisione viene eseguita in corrispondenza delle interruzioni di riga.
+
+Nella variabile "shebang_interpreter" inseriamo la prima riga letta
+	shebang_interpreter  = line_files_content[0].split()
+
+Dopo di che fa il controllo:
+Se la prima riga non è vuota e inizia con l'interprete "#!" allora va all'interno della funzione test(shebang_interpreter)
+Infine fa il controllo sul contatore, che era stato definito nelle prime righe di codice.
+Se la variabile key non sta nel contatore, allora il contatore sarà inizializzato a zero, altrimenti incrementa il valore del contatore.
+Lo script termina stampando a video il conto degli interpreti all'interno di ogni file che sta in quella directory
+
+All'interno della funzione test(shebang_interpreter) andiamo a fare degli ulteriori controlli. Sostanzialmente andiamo a verificare
+e a inserire all'interno dell'array che sta dentro la funzione se sono presenti anche dei flag, quindi se la prima riga inizia
+con l'interprete shebang "!#" e con una flag"-" verranno inseriti all'interno dell'array, altrimenti beak.
+Alla fine ritorniamo con una join() il nostro array:
+
+def test(shebang_interpreter):
+    t = []
+    for word in shebang_interpreter:
+        if word.startswith("-"): #nel caso in cui ci siano flag
+            t.append(word)
+        elif word.startswith("#!"):
+            t.append(word)
+        else:
+            break;
+    return " ".join(t)
+	
+
+
+

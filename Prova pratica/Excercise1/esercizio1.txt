@@ -1,0 +1,64 @@
+Questo script prende in ingresso 3 parametri,il percorso della directory di
+riferimento, il parametro "wordToReplace" che prende la parola che vogliamo sostituire
+e "valueWord" che fa riferimento alla stringa da sostituire.
+
+Per far ciò utilizziamo i moduli os e sys che permettono a Python di interagire con il
+sistema operativo e fare determinate operazioni come ad esempio prendere il pathname e di accedere agli argomenti passati
+dalla riga di comando.
+
+La condizione if len(sys.argv) != 4 verifica se il numero di argomenti passati dalla riga di comando è diverso da 4 (il primo argomento è il nome del file,
+ quindi gli argomenti iniziano da sys.argv[1]). In caso contrario, viene stampato un messaggio di errore e il programma termina con sys.exit().
+
+In seguito con la funzione sys.argv passiamo i parametri che corrispondono alle stringhe 
+che vogliamo sostituire.
+
+L'acronimo argv sta per argument variable: si tratta semplicemente di una lista di stringhe
+contenente i parametri che vengono passati allo script quando lo state richiamando.
+Il primo parametro della lista argv (il valore ad indice 0) è sempre il nome dello script.
+Il resto dei valori è ordinato secondo l'ordine in cui sono stati passati.
+
+Dopo aver inserito i parametri viene fatto un controllo per verificare se il path startPath è corretto, cioè è una directory valida,
+tramite il metodo os.path.isdir(). Se non lo è, viene stampato un messaggio di errore e termina.
+ 
+Se il path è valido entra nella funzione ChangeOccuranceFile().
+La funzione changeOccuranceFiles è definita per esplorare la directory (e i suoi sottodirectory) specificata come parametro,
+ cercando i file di testo e sostituendo la parola specificata con quella fornita dall'utente.
+
+All'interno della funzione inseriamo il percorso all'interno della variabile files tramite
+il metodo os.listdir():
+	Il metodo os.listdir() in python viene utilizzato per ottenere l'elenco di tutti i file e le directory nella 
+	directory specificata. Se non specifichiamo alcuna directory, verrà restituito l'elenco di file e directory nella
+	 directory di lavoro corrente.
+
+La funzione os.listdir() viene utilizzata per ottenere una lista di file e directory nella directory corrente.
+
+Viene iterata la lista di file e directory. Se l'elemento corrente è una directory, la funzione viene richiamata in modo ricorsivo su quella directory.
+ Se l'elemento corrente è un file, viene aperto con open() utilizzando la codifica iso-8859-1 e il suo contenuto viene letto con file.read().
+	 
+Dopo di che facciamo un ciclo for per ogni file all'interno della directory
+Creiamo una variabile pathFile al quale assegnamo il metodo os.path.join()
+	Il metodo os.path.join() in Python unisce in modo intelligente uno o più componenti del percorso. Questo metodo concatena
+	vari componenti del percorso con esattamente un separatore di directory ('/') che segue ogni parte non vuota tranne l'ultimo
+	componente del percorso. Se l'ultimo componente del percorso da unire è vuoto, alla fine viene inserito un separatore di directory ('/'). 
+	Se un componente del percorso rappresenta un percorso assoluto, tutti i componenti precedenti uniti vengono eliminati e l'unione continua
+	dal componente del percorso assoluto.
+	
+Con il metodo os.path.isFile(pathFile) controlliamo che il parametro passato è un file regolare esistente o meno.
+Se restituisce true, entriamo all'interno della condizione if, apre il file in lettura ("r"), legge il file e 
+dopo di che con la variabile:
+
+new_content = file_content.replace(wordToReplace, valueWord)
+
+sostanzialmente sostituiamo la stringa che sta in "wordToReplace" con la stringa che sta in "valueWord"
+tramite il metodo replace().
+
+Una volta sostituitp, apriamo il file in scrittura: 
+	open(pathFile, "w")
+e con:
+	file.write(new_content)
+andiamo a scrivere la stringa che voleva sostituire.
+
+La funzione changeOccuranceFiles() viene richiamata senza parametri per avviare il processo di sostituzione per tutti i file nella directory startPath.
+la funzione changeOccuranceFiles viene chiamata senza argomenti per iniziare la ricerca dei file nella directory di partenza. 
+
+Se tutto ha funzionato correttamente, stamperà a video "Done!"
